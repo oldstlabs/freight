@@ -248,7 +248,7 @@ class TaskRunner(object):
                 self._cancel()
             elif self.timeout and time() > self._started + self.timeout:
                 self._timeout()
-            elif self._logreporter.last_recv and self._logreporter.last_recv < time() - self.read_timeout:
+            elif self._logreporter.last_recv and self.timeout and self._logreporter.last_recv < time() - self.read_timeout:
                 self._read_timeout()
             if self._process.poll() is None:
                 sleep(0.1)
