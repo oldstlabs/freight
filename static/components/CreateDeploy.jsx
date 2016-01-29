@@ -20,7 +20,7 @@ var CreateDeploy = React.createClass({
 
     return {
       app: defaultApp ? defaultApp.name : null,
-      env: defaultEnv ? defaultEnv.name : null,
+      env: defaultEnv ? defaultEnv : null,
       envMap: envMap,
       ref: defaultRef,
       submitInProgress: false,
