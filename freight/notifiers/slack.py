@@ -51,6 +51,8 @@ class SlackNotifier(Notifier):
             'link': http.absolute_uri('/{}/{}/{}'.format(app.name, task.environment, task.number)),
         }
 
+        attachments = []
+
         # TODO(dcramer): show the ref when it differs from the sha
         if event == NotifierEvent.TASK_QUEUED:
             title = "[{app_name}/{env}] Queued deploy <{link}|#{number}> ({sha})".format(**params)
@@ -61,14 +63,15 @@ class SlackNotifier(Notifier):
         elif task.status == TaskStatus.cancelled:
             title = "[{app_name}/{env}] Deploy <{link}|#{number}> ({sha}) was cancelled after {duration}s".format(**params)
         elif task.status == TaskStatus.finished:
-            title = "[{app_name}/{env}] Successfully deployed <{link}|#{number}> ({sha}) after {duration}s ".format(**params)
-            title += random.choice(SQUIRRELS)
+            title = "[{app_name}/{env}] Successfully deployed <{link}|#{number}> ({sha}) after {duration}s".format(**params)
+            attachments.append({'image_url': random.choice(SQUIRRELS)})
         else:
             raise NotImplementedError(task.status)
 
         payload = {
             'parse': 'none',
             'text': title,
+            'attachments': attachments,
         }
 
         values = {'payload': json.dumps(payload)}
