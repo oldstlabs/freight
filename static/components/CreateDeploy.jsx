@@ -25,6 +25,8 @@ var CreateDeploy = React.createClass({
       ref: defaultRef,
       submitInProgress: false,
       submitError: null,
+      paramName: null,
+      paramVal: null
     };
   },
 
@@ -58,6 +60,18 @@ var CreateDeploy = React.createClass({
     });
   },
 
+  onChangeParamName(e) {
+    this.setState({
+      paramName: e.target.value,
+    });
+  },
+
+  onChangeParamVal(e) {
+    this.setState({
+      paramVal: e.target.value,
+    });
+  },
+
   onSubmit(e) {
     e.preventDefault();
 
@@ -68,13 +82,19 @@ var CreateDeploy = React.createClass({
     this.setState({
       submitInProgress: true,
     }, () => {
+      var data = {
+        app: this.state.app,
+        env: this.state.env,
+        ref: this.state.ref
+      };
+      if (this.state.paramName && this.state.paramVal) {
+        var params = {};
+        params[this.state.paramName] = this.state.paramVal;
+        data.params = JSON.stringify(params);
+      }
       api.request('/tasks/', {
         method: 'POST',
-        data: {
-          app: this.state.app,
-          env: this.state.env,
-          ref: this.state.ref
-        },
+        data: data,
         success: (data) => {
           this.gotoTask(data);
         },
@@ -135,6 +155,19 @@ var CreateDeploy = React.createClass({
               <input type="text" className="form-control"
                      onChange={this.onChangeRef}
                      placeholder="e.g. master" value={this.state.ref} />
+            </div>
+            <div className="form-group">
+              <label>Param</label>
+              <div className="form-inline">
+                  <div className="form-group">
+                    <input type="text" className="form-control"
+                           onChange={this.onChangeParamName} value={this.state.paramName} />
+                  </div>
+                  <div className="form-group">
+                    <input type="text" className="form-control"
+                           onChange={this.onChangeParamVal} value={this.state.paramVal} />
+                  </div>
+               </div>
             </div>
             <div className="submit-group">
               <button type="submit" className="btn btn-primary"
